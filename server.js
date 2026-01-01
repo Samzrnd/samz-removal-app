@@ -18,10 +18,10 @@ app.use(express.static(path.join(__dirname, 'public')));
 // 2. DATABASE CONNECTION
 // UPDATE THESE WITH YOUR REAL CPANEL DETAILS
 const db = mysql.createPool({
-    host: '49.12.134.146',       
-    user: 'samzrndc',       // Your cPanel Database Username
-    password: 'Samz2025',// Your cPanel Database Password
-    database: 'samz_db',     // Your cPanel Database Name
+    host: '49.12.134.146', // (The number IP from cPanel dashboard)
+    user: 'samzrndc_samz_user',     // Updated with your prefix
+    password: 'Samz2025', 
+    database: 'samzrndc_samz_db',   // Updated with your prefix
     waitForConnections: true,
     connectionLimit: 10,
     queueLimit: 0
@@ -75,4 +75,5 @@ app.listen(port, () => {
     
 
 });
+
 

@@ -13,8 +13,9 @@ const port = 3000;
 // 1. SETUP MIDDLEWARE
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-app.use(express.static(path.join(__dirname, 'public'))); 
-app.use('/uploads', express.static(path.join(__dirname, 'uploads'))); // Allow access to uploaded images
+// Serve static files from the same directory (where uk.html is)
+app.use(express.static(__dirname)); 
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // 2. DATABASE CONNECTION (Your Real cPanel Details)
 const db = mysql.createPool({
@@ -39,8 +40,8 @@ db.getConnection((err, connection) => {
 
 // 3. HOME PAGE ROUTE
 app.get('/', (req, res) => {
-    // ⚠️ MAKE SURE THIS MATCHES YOUR FILE NAME (index.html or uk.html)
-    res.sendFile(path.join(__dirname, 'index.html')); 
+    // ⚠️ Loading YOUR Main File
+    res.sendFile(path.join(__dirname, 'uk.html')); 
 });
 
 // 4. SIGN UP ROUTE
@@ -78,66 +79,4 @@ app.post('/login', (req, res) => {
         if (isMatch) {
             res.json({ success: true, user: user });
         } else {
-            res.status(401).json({ success: false, message: "Incorrect password" });
-        }
-    });
-});
-
-// 6. UPDATE PROFILE ROUTE
-app.post('/update-profile', (req, res) => {
-    const { fullName, email, mobile, address, postcode } = req.body;
-    const sql = "UPDATE users SET full_name = ?, email = ?, address = ?, postcode = ? WHERE phone = ?";
-    
-    db.query(sql, [fullName, email, address, postcode, mobile], (err, result) => {
-        if (err) return res.status(500).json({ success: false, message: err.message });
-        res.json({ success: true, message: "Profile Updated" });
-    });
-});
-
-// 7. BOOK A TRIP ROUTE
-app.post('/book-trip', (req, res) => {
-    const { mobile, pickup, dropoff, truck, date, time } = req.body;
-    const sql = "INSERT INTO bookings (user_mobile, pickup_loc, dropoff_loc, truck_type, booking_date, booking_time, status) VALUES (?, ?, ?, ?, ?, ?, 'Processing')";
-    
-    db.query(sql, [mobile, pickup, dropoff, truck, date, time], (err, result) => {
-        if (err) return res.status(500).json({ success: false, error: err.message });
-        res.json({ success: true, id: result.insertId });
-    });
-});
-
-// 8. GET BOOKINGS ROUTE
-app.post('/my-bookings', (req, res) => {
-    const { mobile } = req.body;
-    const sql = "SELECT * FROM bookings WHERE user_mobile = ? ORDER BY id DESC";
-    
-    db.query(sql, [mobile], (err, results) => {
-        if (err) return res.status(500).json({ success: false });
-        res.json({ success: true, bookings: results });
-    });
-});
-
-// 9. IMAGE UPLOAD SETUP
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => cb(null, 'uploads/'),
-    filename: (req, file, cb) => cb(null, Date.now() + path.extname(file.originalname))
-});
-const upload = multer({ storage: storage });
-
-// 10. UPLOAD AVATAR ROUTE
-app.post('/upload-avatar', upload.single('avatar'), (req, res) => {
-    if (!req.file) return res.status(400).json({ success: false });
-    
-    const mobile = req.body.mobile;
-    const imagePath = `uploads/${req.file.filename}`;
-    const sql = "UPDATE users SET profile_pic = ? WHERE phone = ?";
-    
-    db.query(sql, [imagePath, mobile], (err) => {
-        if (err) return res.status(500).json({ success: false });
-        res.json({ success: true, imagePath: imagePath });
-    });
-});
-
-// START SERVER
-app.listen(port, () => {
-    console.log(`Server running on port ${port}`);
-});
+            res.status(401).

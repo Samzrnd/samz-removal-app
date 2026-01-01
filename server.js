@@ -13,7 +13,7 @@ const port = 3000;
 // 1. SETUP MIDDLEWARE
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-// Serve static files (HTML, CSS, JS) from the same folder
+// Serve static files from the root directory
 app.use(express.static(__dirname)); 
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
@@ -40,7 +40,7 @@ db.getConnection((err, connection) => {
 
 // 3. HOME PAGE ROUTE
 app.get('/', (req, res) => {
-    // ⚠️ Make sure 'uk.html' is uploaded to GitHub in the same folder as this file
+    // ⚠️ Ensure 'uk.html' is uploaded to GITHUB
     res.sendFile(path.join(__dirname, 'uk.html')); 
 });
 
@@ -131,3 +131,14 @@ app.post('/upload-avatar', upload.single('avatar'), (req, res) => {
     const mobile = req.body.mobile;
     const imagePath = `uploads/${req.file.filename}`;
     const sql = "UPDATE users SET profile_pic = ? WHERE phone = ?";
+    
+    db.query(sql, [imagePath, mobile], (err) => {
+        if (err) return res.status(500).json({ success: false });
+        res.json({ success: true, imagePath: imagePath });
+    });
+});
+
+// START SERVER
+app.listen(port, () => {
+    console.log(`Server running on port ${port}`);
+});

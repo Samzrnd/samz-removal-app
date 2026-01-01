@@ -18,9 +18,9 @@ app.use(express.static(path.join(__dirname, 'public')));
 // 2. DATABASE CONNECTION
 // UPDATE THESE WITH YOUR REAL CPANEL DETAILS
 const db = mysql.createPool({
-    host: 'localhost',       
-    user: 'samz_user',       // Your cPanel Database Username
-    password: 'YourPassword',// Your cPanel Database Password
+    host: '49.12.134.146',       
+    user: 'samzrndc',       // Your cPanel Database Username
+    password: 'Samz2025',// Your cPanel Database Password
     database: 'samz_db',     // Your cPanel Database Name
     waitForConnections: true,
     connectionLimit: 10,
@@ -72,4 +72,7 @@ app.post('/signup', async (req, res) => {
 app.listen(port, () => {
     console.log(`Server running on port ${port}`);
 
+    
+
 });
+

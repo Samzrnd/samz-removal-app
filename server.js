@@ -5,6 +5,8 @@ const bcrypt = require('bcrypt');
 const path = require('path');
 
 const app = express();
+const cors = require('cors'); // <--- ADD THIS
+app.use(cors());              // <--- ADD THIS
 const port = 3000;
 
 // 1. SETUP MIDDLEWARE
@@ -69,4 +71,5 @@ app.post('/signup', async (req, res) => {
 // 5. START SERVER
 app.listen(port, () => {
     console.log(`Server running on port ${port}`);
+
 });
